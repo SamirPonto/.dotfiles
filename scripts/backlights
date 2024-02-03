@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+active_output=$(xrandr --listactivemonitors | awk '/\*/ {print $4}')
+
+if [ -n "$active_output" ]; then
+    # Increase or decrease the brightness of the active output
+    current_brightness=$(xrandr --verbose --current | awk -F '[ ,]+' '/Brightness:/ {print $2}')
+    new_brightness=$(echo $(xrandr --verbose --current | grep -i brightness | cut -f2 -d ' ') + $1 | bc)
+    echo "current=$current_brightness"
+    echo "new=$new_brightness"
+    echo $(echo "xrandr --output "$active_output" --brightness "$new_brightness"")
+    xrandr --output "$active_output" --brightness "$new_brightness"
+else
+    echo "No active output found."
+fi
+
